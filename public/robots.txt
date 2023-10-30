@@ -1,0 +1,116 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:
+import React from 'react'
+import { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
+import uniqid from 'uniqid';
+// import { alert } from 'bootstrap';
+import { addVideo } from '../services/allapis';
+// import { baseUrl } from '../services/baseurl';
+
+
+
+function Add() {
+  const setValues=(e)=>{
+    let {value,name}=e.target
+    setInputs({...inputs,[name]:value})
+  }
+
+  const [inputs,setInputs]=useState({
+    id:"",
+    caption:"",
+  cover_image:"",
+  video_Url:""
+  
+  })
+  // function to extract video-url
+const extractURL=(e)=>{
+let videoURL=e.target.value
+if(videoURL.includes("v=")){
+//   let index=videoURL.indexOf("v=")
+// let subUrl=videoURL.slice(index+2,index+13)
+// console.log(subUrl);
+let subUrl = videoURL.split("v=")[1]
+// console.log(subUrl);
+let finalUrl=`https://www.youtube.com/embed/${subUrl}?autoplay=1`
+setInputs({...inputs,["video url"]:finalUrl})
+}
+}
+
+// function to addclick
+// const addHandle=()=>{
+//   alert("button clicked")
+//   setShow(false)
+// }
+
+const addHandle=async()=>{
+let id=uniqid()
+setInputs({...inputs,["id"]:id })
+
+const result= await addVideo(inputs)
+console.log(result);
+ 
+if (result.status>=200&&result.status<300){
+  alert("video added")
+}
+
+}
+
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+  return (
+    <div>
+     <Button className='fs-5' variant="" onClick={handleShow}>
+     <i  class="fa-solid fa-cloud-arrow-up fa-beat"></i>
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Here</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <FloatingLabel
+        controlId="floatingInput"
+        label="vdeo Caption"
+        className="mb-3"
+      >
+        <Form.Control name='caption' onChange={(e)=>setValues(e)} type="email" placeholder="name@example.com" />
+      </FloatingLabel>
+      <FloatingLabel
+        controlId="floatingInput"
+        label="cover_image URL"
+        className="mb-3"
+      >
+        <Form.Control  name='cover_image URL'  type="email" placeholder="name@example.com" />
+      </FloatingLabel>
+      <FloatingLabel
+        controlId="floatingInput"
+        label="youtube video URL"
+        className="mb-3"
+      >
+        <Form.Control onChange={(e)=>extractURL(e)} type="email" placeholder="name@example.com" />
+      </FloatingLabel>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={addHandle}>
+            Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
+  
+
+    </div>
+  )
+}
+
+export default Add
